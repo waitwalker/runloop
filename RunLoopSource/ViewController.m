@@ -8,9 +8,13 @@
 
 #import "ViewController.h"
 
-@interface ViewController ()
+@interface ViewController ()<UITableViewDelegate,UITableViewDataSource>
+
+@property (nonatomic, strong) UITableView *tableView;
 
 @end
+
+static NSString * reusedCellId = @"reusedCellId";
 
 @implementation ViewController
 
@@ -19,11 +23,32 @@
     
     NSLog(@"%@",[NSRunLoop currentRunLoop]);
     
+    self.tableView = [[UITableView alloc]initWithFrame:self.view.bounds style:UITableViewStylePlain];
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:reusedCellId];
+    [self.view addSubview:self.tableView];
+    
 //    UITapGestureRecognizer *tapGes = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapAction)];
 //    [self.view addGestureRecognizer:tapGes];
     
     
     //[self performSelectorOnMainThread:@selector(handleSource0) withObject:nil waitUntilDone:YES];
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 80;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reusedCellId];
+    cell.textLabel.text = [NSString stringWithFormat:@"%ld",indexPath.item];
+    [cell.imageView performSelector:@selector(setImage:) withObject:[UIImage imageNamed:@"ok.jpg"] afterDelay:2.0 inModes:@[NSDefaultRunLoopMode]];
+    return cell;
 }
 
 - (void)tapAction {
